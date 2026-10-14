@@ -8,6 +8,7 @@ local group = vim.api.nvim_create_augroup("mdrender", { clear = true })
 
 M.config = {
   enabled = true, -- render new markdown buffers automatically
+  raw_cursor_line = true, -- show raw markdown on the cursor line (false: render every line)
   heading_icons = { "◉ ", "○ ", "✸ ", "✿ ", "◆ ", "◇ " },
   bullets = { "●", "○", "◆", "◇" },
   checkbox = { unchecked = "☐", checked = "☑" },
@@ -200,7 +201,7 @@ local function render(buf)
   local top, bot, width = math.huge, 0, 0
   for _, win in ipairs(wins) do
     vim.wo[win][0].conceallevel = 2
-    vim.wo[win][0].concealcursor = ""
+    vim.wo[win][0].concealcursor = M.config.raw_cursor_line and "" or "nvic"
     top = math.min(top, vim.fn.line("w0", win) - 1)
     bot = math.max(bot, vim.fn.line("w$", win))
     local info = vim.fn.getwininfo(win)[1]
@@ -209,7 +210,7 @@ local function render(buf)
 
   -- Show raw markdown on the cursor line so it stays editable.
   local cursor = -1
-  if vim.api.nvim_get_current_buf() == buf then
+  if M.config.raw_cursor_line and vim.api.nvim_get_current_buf() == buf then
     cursor = vim.api.nvim_win_get_cursor(0)[1] - 1
   end
 
@@ -272,6 +273,7 @@ local function set_enabled(buf, value)
   if not value then
     for _, win in ipairs(vim.fn.win_findbuf(buf)) do
       vim.wo[win][0].conceallevel = 0
+      vim.wo[win][0].concealcursor = ""
     end
   end
   render(buf)

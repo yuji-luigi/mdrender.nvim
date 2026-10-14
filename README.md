@@ -5,7 +5,7 @@ treesitter `markdown` parser bundled with Neovim (0.10+).
 
 Renders headings, bullets, task checkboxes, block quotes, horizontal rules and
 fenced code blocks with extmarks. The line under the cursor always shows the raw
-Markdown so you can edit it.
+Markdown so you can edit it (set `raw_cursor_line = false` to render it too).
 
 ## Install
 
@@ -20,6 +20,7 @@ It attaches to every `markdown` buffer automatically. `setup()` is optional:
 ```lua
 require("mdrender").setup({
   enabled = true,
+  raw_cursor_line = true, -- false: render the cursor line too (copy rendered text)
   heading_icons = { "◉ ", "○ ", "✸ ", "✿ ", "◆ ", "◇ " },
   bullets = { "●", "○", "◆", "◇" },
   checkbox = { unchecked = "☐", checked = "☑" },
